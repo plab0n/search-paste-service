@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	localErrs "github.com/sash20m/go-api-template/internal/errors"
+	localErrs "github.com/plab0n/search-paste/internal/errors"
 	"github.com/unrolled/render"
 )
 

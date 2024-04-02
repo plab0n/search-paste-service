@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/book/add": {
+        "/api/paste/add": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -24,40 +24,22 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Books"
+                    "Paste"
                 ],
-                "summary": "Add a specific book",
+                "summary": "Add a paste",
                 "parameters": [
                     {
-                        "description": "Book title",
+                        "description": "Can be a url or plain text",
+                        "name": "paste",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "title of the paste",
                         "name": "title",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Book author",
-                        "name": "author",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Book coverUrl",
-                        "name": "coverUrl",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Book post url",
-                        "name": "postUrl",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -75,19 +57,19 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/book/delete/{id}": {
+        "/api/paste/delete/{id}": {
             "delete": {
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Books"
+                    "Paste"
                 ],
-                "summary": "Delete a specific book",
+                "summary": "Delete a specific paste",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Book ID",
+                        "description": "Paste id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -103,7 +85,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/book/update": {
+        "/api/paste/update": {
             "patch": {
                 "consumes": [
                     "application/json"
@@ -112,37 +94,21 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Books"
+                    "Paste"
                 ],
-                "summary": "Update a specific book",
+                "summary": "Update a specific paste",
                 "parameters": [
                     {
-                        "description": "Book title",
-                        "name": "title",
+                        "description": "Paste id",
+                        "name": "id",
                         "in": "body",
                         "schema": {
                             "type": "string"
                         }
                     },
                     {
-                        "description": "Book author",
-                        "name": "author",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Book coverUrl",
-                        "name": "coverUrl",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Book post url",
-                        "name": "postUrl",
+                        "description": "Updated paste",
+                        "name": "paste",
                         "in": "body",
                         "schema": {
                             "type": "string"
@@ -159,19 +125,19 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/book/{id}": {
+        "/api/paste/{id}": {
             "get": {
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Books"
+                    "Paste"
                 ],
-                "summary": "Get a specific book",
+                "summary": "Get a specific paste",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Book ID",
+                        "description": "Paste ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -187,15 +153,15 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/books": {
+        "/api/pastes": {
             "get": {
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Books"
+                    "paste"
                 ],
-                "summary": "Get all books",
+                "summary": "Get all Pastes",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -214,19 +180,19 @@ const docTemplate = `{
         "model.GetBookResponse": {
             "type": "object",
             "properties": {
-                "author": {
-                    "type": "string"
-                },
-                "coverUrl": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
-                "postUrl": {
+                "title": {
+                    "type": "string"
+                }
+                "paste": {
                     "type": "string"
                 },
-                "title": {
+                "createdBy": {
+                    "type": "string"
+                },
+                "createdAt": {
                     "type": "string"
                 }
             }
@@ -248,8 +214,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "Go Rest Api",
-	Description:      "Api Endpoints for Go Server",
+	Title:            "Search paste Rest Api",
+	Description:      "Api Endpoints for Search Paste service",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

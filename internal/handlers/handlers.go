@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"github.com/go-playground/validator/v10"
-	"github.com/sash20m/go-api-template/internal/storage"
-	"github.com/sash20m/go-api-template/pkg/httputils"
+	"github.com/plab0n/search-paste/internal/storage"
+	"github.com/plab0n/search-paste/pkg/httputils"
 )
 
 // Handlers implements all the handler functions and has the dependencies that they use (Sender, Storage).

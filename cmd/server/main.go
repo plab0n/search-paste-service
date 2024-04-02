@@ -1,14 +1,14 @@
 package main
 
 import (
+	"github.com/plab0n/search-paste/config"
+	api "github.com/plab0n/search-paste/internal"
+	"github.com/plab0n/search-paste/pkg/logger"
 	"os"
 	"strings"
 	"sync"
 
 	"github.com/joho/godotenv"
-	"github.com/sash20m/go-api-template/config"
-	api "github.com/sash20m/go-api-template/internal"
-	"github.com/sash20m/go-api-template/pkg/logger"
 	"github.com/sirupsen/logrus"
 )
 

@@ -1,4 +1,4 @@
-module search-paste
+module github.com/plab0n/search-paste
 
 go 1.21.5
 
