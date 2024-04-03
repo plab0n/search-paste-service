@@ -44,9 +44,9 @@ func (app *AppServer) Run(appConfig config.ApiEnvConfig) {
 		panic(err.Error())
 	}
 	// Migrations which will update the DB or create it if it doesn't exist.
-	if err := storage.MigratePostgres("file://migrations"); err != nil {
-		logger.Log.Fatal(err)
-	}
+	//if err := storage.MigratePostgres("file://migrations"); err != nil {
+	//	logger.Log.Fatal(err)
+	//}
 	app.Storage = storage
 
 	router := mux.NewRouter().StrictSlash(true)

@@ -1,15 +1,15 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
+	_ "github.com/plab0n/search-paste/cmd/server/docs"
 	"github.com/plab0n/search-paste/config"
 	api "github.com/plab0n/search-paste/internal"
 	"github.com/plab0n/search-paste/pkg/logger"
+	"github.com/sirupsen/logrus"
 	"os"
 	"strings"
 	"sync"
-
-	"github.com/joho/godotenv"
-	"github.com/sirupsen/logrus"
 )
 
 // @title Go Rest Api

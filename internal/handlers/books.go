@@ -9,8 +9,8 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
-	"github.com/sash20m/go-api-template/internal/model"
-	"github.com/sash20m/go-api-template/pkg/logger"
+	"github.com/plab0n/search-paste/internal/model"
+	"github.com/plab0n/search-paste/pkg/logger"
 	"github.com/sirupsen/logrus"
 )
 

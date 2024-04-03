@@ -177,7 +177,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "model.GetBookResponse": {
+        "model.GetPasteResponse": {
             "type": "object",
             "properties": {
                 "id": {

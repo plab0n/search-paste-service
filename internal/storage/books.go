@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/sash20m/go-api-template/internal/model"
+	"github.com/plab0n/search-paste/internal/model"
 )
 
 func (s *Storage) AddBook(ctx context.Context, book model.AddBookRequest) (int, error) {

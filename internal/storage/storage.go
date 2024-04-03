@@ -5,7 +5,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq" // Initializes the postgres driver
-	"github.com/sash20m/go-api-template/internal/model"
+	"github.com/plab0n/search-paste/internal/model"
 )
 
 type StorageInterface interface {
