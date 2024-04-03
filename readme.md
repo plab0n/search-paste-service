@@ -1,4 +1,4 @@
-# Golang Rest API Template
+# Search paste service
 > Golang Rest API Template with clear, scalable structure that can sustain large APIs.
 
 ## Table of Contents
