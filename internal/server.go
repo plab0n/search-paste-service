@@ -52,11 +52,11 @@ func (app *AppServer) Run(appConfig config.ApiEnvConfig) {
 	router := mux.NewRouter().StrictSlash(true)
 	router.MethodNotAllowedHandler = http.HandlerFunc(app.NotAllowedHandler)
 	router.NotFoundHandler = http.HandlerFunc(app.NotFoundHandler)
-	router.Methods("GET").Path("/api/books").HandlerFunc(app.GetBooksHandler)
-	router.Methods("GET").Path("/api/book/{id:[0-9]+}").HandlerFunc(app.GetBookHandler)
-	router.Methods("POST").Path("/api/book/add").HandlerFunc(app.AddBookHandler)
-	router.Methods("PATCH").Path("/api/book/update").HandlerFunc(app.UpdateBookHandler)
-	router.Methods("DELETE").Path("/api/book/delete/{id:[0-9]+}").HandlerFunc(app.DeleteBookHandler)
+	router.Methods("GET").Path("/api/pastes").HandlerFunc(app.GetPastesHandler)
+	router.Methods("GET").Path("/api/paste/{id:[0-9]+}").HandlerFunc(app.GetPasteHandler)
+	router.Methods("POST").Path("/api/paste/add").HandlerFunc(app.AddPasteHandler)
+	router.Methods("PATCH").Path("/api/paste/update").HandlerFunc(app.UpdatePasteHandler)
+	router.Methods("DELETE").Path("/api/paste/delete/{id:[0-9]+}").HandlerFunc(app.DeletePasteHandler)
 	// other handlers
 
 	if app.Env != config.PROD_ENV {
