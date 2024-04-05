@@ -10,10 +10,10 @@ import (
 	"github.com/plab0n/search-paste/internal/model"
 )
 
-func (s *Storage) AddBook(ctx context.Context, book model.AddBookRequest) (int, error) {
+func (s *Storage) AddPaste(ctx context.Context, pasteRequest model.AddPasteRequest) (int, error) {
 	var id int
-	err := s.db.Get(&id, `INSERT INTO books(title, author, cover_url, post_url, created_at, updated_at)
-			VALUES($1,$2,$3,$4,$5,$6) RETURNING id`, book.Title, book.Author, book.CoverURL, book.PostURL, time.Now().UTC(), time.Now().UTC())
+	err := s.db.Get(&id, `INSERT INTO books(title, text,created_at, updated_at)
+			VALUES($1,$2,$3,$4,$5,$6) RETURNING id`, pasteRequest.Title, pasteRequest.Text, time.Now().UTC(), time.Now().UTC())
 
 	if err != nil {
 		return 0, err
@@ -22,7 +22,7 @@ func (s *Storage) AddBook(ctx context.Context, book model.AddBookRequest) (int, 
 	return id, nil
 }
 
-func (s *Storage) GetBook(ctx context.Context, id int) (model.Book, error) {
+func (s *Storage) GetPaste(ctx context.Context, id int) (model.Book, error) {
 	var book model.Book
 
 	err := s.db.Get(&book, `Select * from books where id=$1`, id)

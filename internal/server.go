@@ -38,7 +38,7 @@ func (app *AppServer) Run(appConfig config.ApiEnvConfig) {
 	}
 
 	// can change DB implementation from here
-	storage, err := storage.NewPostgresDB()
+	store, err := storage.NewPostgresDB()
 	if err != nil {
 		logger.Log.Error(err)
 		panic(err.Error())
@@ -47,7 +47,7 @@ func (app *AppServer) Run(appConfig config.ApiEnvConfig) {
 	//if err := storage.MigratePostgres("file://migrations"); err != nil {
 	//	logger.Log.Fatal(err)
 	//}
-	app.Storage = storage
+	app.Storage = store
 
 	router := mux.NewRouter().StrictSlash(true)
 	router.MethodNotAllowedHandler = http.HandlerFunc(app.NotAllowedHandler)

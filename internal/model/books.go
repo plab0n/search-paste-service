@@ -14,11 +14,9 @@ type Book struct {
 
 // Below are the structures of the request/response structs in the books handler.
 
-type AddBookRequest struct {
-	Title    string `json:"title" validate:"required"`
-	Author   string `json:"author" validate:"required"`
-	CoverURL string `json:"coverUrl" validate:"required"`
-	PostURL  string `json:"postUrl" validate:"required"`
+type AddPasteRequest struct {
+	Title string `json:"title" validate:"required"`
+	Text  string `json:"coverUrl" validate:"required"`
 }
 
 type GetBookResponse struct {
