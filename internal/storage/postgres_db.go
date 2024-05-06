@@ -2,13 +2,13 @@ package storage
 
 import (
 	"errors"
+	"github.com/plab0n/search-paste/pkg/logger"
 	"os"
 
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/postgres"
 	_ "github.com/golang-migrate/migrate/source/file" // import file driver for migrate
 	"github.com/jmoiron/sqlx"
-	"github.com/sash20m/go-api-template/pkg/logger"
 )
 
 func NewPostgresDB() (*Storage, error) {
