@@ -33,17 +33,7 @@ func (s *Storage) GetPaste(ctx context.Context, id int) (model.Book, error) {
 	return book, nil
 }
 
-func (s *Storage) GetBooks(ctx context.Context) ([]model.Book, error) {
-	var books []model.Book
-	err := s.db.Select(&books, `SELECT * from books`)
-	if err != nil {
-		return nil, err
-	}
-
-	return books, nil
-}
-
-func (s *Storage) UpdateBook(ctx context.Context, book model.UpdateBookRequest) (int, error) {
+func (s *Storage) UpdatePaste(ctx context.Context, book model.UpdateBookRequest) (int, error) {
 	var columns []string
 	var argCount = 1
 	var args []interface{}
@@ -92,7 +82,7 @@ func (s *Storage) UpdateBook(ctx context.Context, book model.UpdateBookRequest) 
 	return id, nil
 }
 
-func (s *Storage) DeleteBook(ctx context.Context, id int) error {
+func (s *Storage) DeletePaste(ctx context.Context, id int) error {
 	_, err := s.db.Exec(`DELETE FROM books WHERE id=$1`, id)
 	if err != nil {
 		return err
@@ -101,7 +91,7 @@ func (s *Storage) DeleteBook(ctx context.Context, id int) error {
 	return nil
 }
 
-func (s *Storage) VerifyBookExists(ctx context.Context, id int) (bool, error) {
+func (s *Storage) VerifyPasteExists(ctx context.Context, id int) (bool, error) {
 	var exists bool
 	err := s.db.Get(&exists, `SELECT EXISTS(SELECT 1 from books where id=$1)`, id)
 	if err != nil {

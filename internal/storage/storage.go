@@ -11,7 +11,6 @@ import (
 type StorageInterface interface {
 	AddPaste(ctx context.Context, book model.AddPasteRequest) (int, error)
 	GetPaste(ctx context.Context, id int) (model.Book, error)
-	GetBooks(ctx context.Context) ([]model.Book, error)
 	UpdatePaste(ctx context.Context, book model.UpdateBookRequest) (int, error)
 	DeletePaste(ctx context.Context, id int) error
 	VerifyPasteExists(ctx context.Context, id int) (bool, error)

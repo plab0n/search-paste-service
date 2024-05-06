@@ -120,7 +120,7 @@ func (app *AppServer) Run(appConfig config.ApiEnvConfig) {
 // OnShutdown is called when the server has a panic.
 func (app *AppServer) OnShutdown() {
 	// Do cleanup or logging
-	logger.OutputLog.Error("Executed OnShutdown")
+	logger.Log.Error("Executed OnShutdown")
 }
 
 // Special server handlers, outside of specific routes we have
