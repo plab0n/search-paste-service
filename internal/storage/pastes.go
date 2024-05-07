@@ -12,8 +12,8 @@ import (
 
 func (s *Storage) AddPaste(ctx context.Context, pasteRequest model.AddPasteRequest) (int, error) {
 	var id int
-	err := s.db.Get(&id, `INSERT INTO books(title, text,created_at, updated_at)
-			VALUES($1,$2,$3,$4,$5,$6) RETURNING id`, pasteRequest.Title, pasteRequest.Text, time.Now().UTC(), time.Now().UTC())
+	err := s.db.Get(&id, `INSERT INTO paste(title, text,created_at, updated_at)
+			VALUES($1,$2,$3,$4) RETURNING id`, pasteRequest.Title, pasteRequest.Text, time.Now().UTC(), time.Now().UTC())
 
 	if err != nil {
 		return 0, err
