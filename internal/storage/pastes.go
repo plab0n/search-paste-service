@@ -22,15 +22,15 @@ func (s *Storage) AddPaste(ctx context.Context, pasteRequest model.AddPasteReque
 	return id, nil
 }
 
-func (s *Storage) GetPaste(ctx context.Context, id int) (model.Book, error) {
-	var book model.Book
+func (s *Storage) GetPaste(ctx context.Context, id int) (model.Paste, error) {
+	var paste model.Paste
 
-	err := s.db.Get(&book, `Select * from books where id=$1`, id)
+	err := s.db.Get(&paste, `Select * from paste where id=$1`, id)
 	if err != nil {
-		return book, err
+		return paste, err
 	}
 
-	return book, nil
+	return paste, nil
 }
 
 func (s *Storage) UpdatePaste(ctx context.Context, book model.UpdateBookRequest) (int, error) {
