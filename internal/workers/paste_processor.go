@@ -15,10 +15,10 @@ var topic string
 func Init() {
 	topic = "paste.Created"
 	p := &PasteProcessor{}
-	p.Process()
+	p.Start()
 }
 
-func (p *PasteProcessor) Process() error {
+func (p *PasteProcessor) Start() error {
 	b := bus.New()
 	ch, err := b.Subscribe(topic)
 
