@@ -39,6 +39,7 @@ func (p *PasteProcessor) Process() error {
 			time.Sleep(time.Second) // Simulate some delay
 		}
 	}()
+	return nil
 }
 
 func isUrl(text string) bool {
