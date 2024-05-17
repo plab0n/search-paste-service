@@ -16,6 +16,8 @@ type Bus interface {
 	SubscribeWithAction(topic string, action func(message interface{}) error)
 }
 
+const BUFFER_SIZE = 5
+
 var bus *MessageBus
 
 func New() *MessageBus {
@@ -42,7 +44,7 @@ func (m *MessageBus) Subscribe(topic string) (chan interface{}, error) {
 	if ch != nil {
 		return ch, nil
 	}
-	ch = make(chan interface{})
+	ch = make(chan interface{}, BUFFER_SIZE)
 	m.channels[topic] = ch
 	return ch, nil
 }
@@ -50,7 +52,7 @@ func (m *MessageBus) Subscribe(topic string) (chan interface{}, error) {
 func (m *MessageBus) SubscribeWithHandler(topic string, action func(message interface{}) error) error {
 	ch := m.channels[topic]
 	if ch == nil {
-		ch = make(chan interface{})
+		ch = make(chan interface{}, BUFFER_SIZE)
 		m.channels[topic] = ch
 	}
 	go func() {
