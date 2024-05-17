@@ -32,7 +32,6 @@ func (m *MessageBus) Publish(topic string, message interface{}) error {
 	ch := m.channels[topic]
 	if ch == nil {
 		return errors.New("No topic found!")
-
 	}
 	ch <- message
 	return nil
