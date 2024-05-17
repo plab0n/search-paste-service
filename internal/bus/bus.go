@@ -3,6 +3,7 @@ package bus
 import (
 	"errors"
 	"github.com/plab0n/search-paste/pkg/logger"
+	"time"
 )
 
 type MessageBus struct {
@@ -47,7 +48,7 @@ func (m *MessageBus) Subscribe(topic string) (chan interface{}, error) {
 	return ch, nil
 }
 
-func (m *MessageBus) SubscribeWithAction(topic string, action func(message interface{}) error) error {
+func (m *MessageBus) SubscribeWithHandler(topic string, action func(message interface{}) error) error {
 	ch := m.channels[topic]
 	if ch == nil {
 		ch = make(chan interface{})
@@ -60,6 +61,7 @@ func (m *MessageBus) SubscribeWithAction(topic string, action func(message inter
 			if err != nil {
 				logger.Log.Error(err)
 			}
+			time.Sleep(time.Second)
 		}
 	}()
 	return nil
