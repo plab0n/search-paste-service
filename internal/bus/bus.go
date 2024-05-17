@@ -3,10 +3,12 @@ package bus
 import (
 	"errors"
 	"github.com/plab0n/search-paste/pkg/logger"
+	"sync"
 	"time"
 )
 
 type MessageBus struct {
+	mtx      sync.Mutex
 	channels map[string]chan interface{}
 }
 
@@ -39,6 +41,7 @@ func (m *MessageBus) Publish(topic string, message interface{}) error {
 	return nil
 }
 
+// Note: Use SubscribeWithHandler instead of this
 func (m *MessageBus) Subscribe(topic string) (chan interface{}, error) {
 	ch := m.channels[topic]
 	if ch != nil {
@@ -50,6 +53,8 @@ func (m *MessageBus) Subscribe(topic string) (chan interface{}, error) {
 }
 
 func (m *MessageBus) SubscribeWithHandler(topic string, action func(message interface{}) error) error {
+	m.mtx.Lock()
+	defer m.mtx.Unlock()
 	ch := m.channels[topic]
 	if ch == nil {
 		ch = make(chan interface{}, BUFFER_SIZE)
