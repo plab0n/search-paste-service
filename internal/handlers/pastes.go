@@ -5,6 +5,8 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"github.com/plab0n/search-paste/internal/model"
+	"github.com/plab0n/search-paste/pkg/logger"
+	"github.com/plab0n/search-paste/pkg/workerutils"
 	"net/http"
 	"strconv"
 	"strings"
@@ -53,6 +55,11 @@ func (h *Handlers) AddPasteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	response := model.IDResponse{ID: id}
 	h.Sender.JSON(w, http.StatusCreated, response)
+
+	err = h.Bus.Publish(workerutils.PasteCreatedTopic(), paste)
+	if err != nil {
+		logger.Log.Error(err)
+	}
 	return
 }
 

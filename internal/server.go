@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"github.com/plab0n/search-paste/config"
+	"github.com/plab0n/search-paste/internal/bus"
 	"github.com/plab0n/search-paste/internal/handlers"
 	"github.com/plab0n/search-paste/internal/middlewares"
 	"github.com/plab0n/search-paste/internal/storage"
@@ -48,7 +49,7 @@ func (app *AppServer) Run(appConfig config.ApiEnvConfig) {
 	//	logger.Log.Fatal(err)
 	//}
 	app.Storage = store
-
+	app.Bus = bus.New()
 	router := mux.NewRouter().StrictSlash(true)
 	router.MethodNotAllowedHandler = http.HandlerFunc(app.NotAllowedHandler)
 	router.NotFoundHandler = http.HandlerFunc(app.NotFoundHandler)

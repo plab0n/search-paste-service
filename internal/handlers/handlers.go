@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/go-playground/validator/v10"
+	"github.com/plab0n/search-paste/internal/bus"
 	"github.com/plab0n/search-paste/internal/storage"
 	"github.com/plab0n/search-paste/pkg/httputils"
 )
@@ -10,6 +11,7 @@ import (
 type Handlers struct {
 	Sender  *httputils.Sender
 	Storage storage.StorageInterface
+	Bus     *bus.MessageBus
 }
 
 // Validate is a singleton that provides validation services for in handlers.
