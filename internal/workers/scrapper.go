@@ -16,6 +16,6 @@ func (c *Scrapper) Start() error {
 	b = bus.New()
 	topic := workerutils.PasteCrawlTopic()
 	h := &workers.WorkerHandler{Bus: b}
-	err := b.SubscribeWithHandler(topic, h.ScrapeUrl)
+	err := b.SubscribeWithHandler(topic, h.Scrapper)
 	return err
 }

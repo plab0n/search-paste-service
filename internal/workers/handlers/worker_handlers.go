@@ -19,7 +19,7 @@ type WorkerHandler struct {
 func (h *WorkerHandler) NewPasteHandler(message interface{}) error {
 	if paste, ok := message.(model.Paste); ok {
 		if ok, _ := isUrl(paste.Text); ok {
-			cm := &model.CrawlerMessage{PasteId: paste.ID, Url: paste.Text}
+			cm := &model.ScrapingInfo{PasteId: paste.ID, Url: paste.Text}
 			err := h.Bus.Publish(workerutils.PasteCrawlTopic(), cm)
 			if err != nil {
 				logger.Log.Error(err)
@@ -37,17 +37,19 @@ func isUrl(u string) (bool, error) {
 	}
 	return parsedUrl.Scheme == "https" && parsedUrl.Host != "", nil
 }
-func (h *WorkerHandler) ScrapeUrl(message interface{}) error {
-	if cm, ok := message.(model.CrawlerMessage); ok {
+func (h *WorkerHandler) Scrapper(message interface{}) error {
+	if cm, ok := message.(model.ScrapingInfo); ok {
 		htmlContent, err := fetchContent(cm.Url)
 		if err != nil {
 			logger.Log.Error(err)
 			return err
 		}
-		plainText, err := html.Parse(strings.NewReader(htmlContent))
+		rootHtml, err := html.Parse(strings.NewReader(htmlContent))
 		if err != nil {
 			return err
 		}
+		plainText := extractText(rootHtml)
+		plainText = cancelNoise(plainText)
 		h.Bus.Publish(workerutils.PasteIndexerTopic(), plainText)
 	}
 	return nil
@@ -70,4 +72,25 @@ func fetchContent(url string) (string, error) {
 	}
 	htmlContent := string(body)
 	return htmlContent, nil
+}
+func extractText(n *html.Node) string {
+	var text string
+
+	if n.Type == html.TextNode {
+		text = n.Data
+	}
+
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		text += extractText(c)
+	}
+
+	return text
+}
+func cancelNoise(text string) string {
+	text = strings.ReplaceAll(text, "\n", " ")     // Replace newline characters with space
+	text = strings.ReplaceAll(text, "\r", "")      // Remove carriage return characters
+	text = strings.ReplaceAll(text, "\t", " ")     // Replace tabs with space
+	text = strings.Join(strings.Fields(text), " ") // Remove extra whitespace
+	text = strings.TrimSpace(text)                 // Trim leading and trailing whitespace
+	return text
 }

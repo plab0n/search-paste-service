@@ -6,7 +6,7 @@ type Paste struct {
 	Text  string `json:"text" db:"text"`
 	*Base
 }
-type CrawlerMessage struct {
+type ScrapingInfo struct {
 	PasteId int    `json:"paste_id"`
 	Url     string `json:"url"`
 }
