@@ -7,7 +7,7 @@ import (
 	"net/url"
 )
 
-type Paste struct {
+type Root struct {
 	Worker
 }
 
@@ -15,11 +15,11 @@ var topic string
 
 func Init() {
 	topic = "paste.Created"
-	p := &Paste{}
+	p := &Root{}
 	p.Start()
 }
 
-func (p *Paste) Start() error {
+func (p *Root) Start() error {
 	b := bus.New()
 	err := b.SubscribeWithHandler(topic, func(message interface{}) error {
 		if paste, ok := message.(model.Paste); ok {
