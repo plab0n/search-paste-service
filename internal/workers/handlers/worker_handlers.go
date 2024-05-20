@@ -19,7 +19,7 @@ type WorkerHandler struct {
 func (h *WorkerHandler) NewPasteHandler(message interface{}) error {
 	if paste, ok := message.(model.Paste); ok {
 		if ok, _ := isUrl(paste.Text); ok {
-			cm := &model.ScrapingInfo{PasteId: paste.ID, Url: paste.Text}
+			cm := model.ScrapingInfo{PasteId: paste.ID, Url: paste.Text}
 			err := h.Bus.Publish(workerutils.PasteCrawlTopic(), cm)
 			if err != nil {
 				logger.Log.Error(err)

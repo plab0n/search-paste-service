@@ -10,7 +10,7 @@ type Root struct {
 	Worker
 }
 
-func Init() {
+func init() {
 	c := &Scrapper{}
 	c.Start()
 

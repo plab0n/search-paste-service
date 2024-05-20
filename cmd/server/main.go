@@ -5,6 +5,7 @@ import (
 	_ "github.com/plab0n/search-paste/cmd/server/docs"
 	"github.com/plab0n/search-paste/config"
 	api "github.com/plab0n/search-paste/internal"
+	_ "github.com/plab0n/search-paste/internal/workers"
 	"github.com/plab0n/search-paste/pkg/logger"
 	"github.com/sirupsen/logrus"
 	"os"

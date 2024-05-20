@@ -21,14 +21,14 @@ type Bus interface {
 const BUFFER_SIZE = 5
 
 var bus *MessageBus
+var once sync.Once
 
 func New() *MessageBus {
-	if bus != nil {
-		return bus
-	}
-	bus := &MessageBus{
-		channels: make(map[string]chan interface{}),
-	}
+	once.Do(func() {
+		bus = &MessageBus{
+			channels: make(map[string]chan interface{}),
+		}
+	})
 	return bus
 }
 
@@ -60,6 +60,7 @@ func (m *MessageBus) SubscribeWithHandler(topic string, action func(message inte
 		ch = make(chan interface{}, BUFFER_SIZE)
 		m.channels[topic] = ch
 	}
+	logger.Log.Info("Subscribed topic %s", topic)
 	go func() {
 		for i := 0; ; i++ {
 			message := <-ch
