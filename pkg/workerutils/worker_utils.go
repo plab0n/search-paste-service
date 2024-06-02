@@ -11,3 +11,7 @@ func PasteCrawlTopic() string {
 func PasteIndexerTopic() string {
 	return "paste.index"
 }
+
+func EmbeddingTopic() string {
+	return "paste.embed"
+}

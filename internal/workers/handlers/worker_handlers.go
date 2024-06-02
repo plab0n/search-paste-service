@@ -54,6 +54,11 @@ func (h *WorkerHandler) Scrapper(message interface{}) error {
 	}
 	return nil
 }
+
+func (h *WorkerHandler) EmbeddingHandler(message interface{}) error {
+
+	return nil
+}
 func fetchContent(url string) (string, error) {
 	//TODO: Check response error codes
 	response, err := http.Get(url)

@@ -33,6 +33,7 @@ func (s *Storage) GetPaste(ctx context.Context, id int) (model.Paste, error) {
 	return paste, nil
 }
 
+// UpdatePaste remove the business logic from repo file
 func (s *Storage) UpdatePaste(ctx context.Context, book model.UpdateBookRequest) (int, error) {
 	var columns []string
 	var argCount = 1
