@@ -70,6 +70,15 @@ func (m *MessageBus) SubscribeWithHandler(topic string, action func(message inte
 			}
 			time.Sleep(time.Second)
 		}
+		//var eg
+		//for {
+		//	select {
+		//	case <-ch:
+		//
+		//	case <-time.After(time.Second * 1):
+		//
+		//	}
+		//}
 	}()
 	return nil
 }

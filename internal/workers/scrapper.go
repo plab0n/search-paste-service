@@ -7,13 +7,14 @@ import (
 )
 
 type Scrapper struct {
-	Worker
+	*BaseWorker
+	// you can introduce bus in here so that, you don't have call the new method every time as you invoked the start method
 }
 
 var b *bus.MessageBus
 
 func (c *Scrapper) Start() error {
-	b = bus.New()
+	b = bus.New() // referring to this line
 	topic := workerutils.PasteCrawlTopic()
 	h := &workers.WorkerHandler{Bus: b}
 	err := b.SubscribeWithHandler(topic, h.Scrapper)
