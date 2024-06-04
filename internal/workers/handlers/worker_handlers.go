@@ -1,6 +1,8 @@
 package workers
 
 import (
+	"bytes"
+	"encoding/json"
 	"github.com/plab0n/search-paste/internal/bus"
 	"github.com/plab0n/search-paste/internal/model"
 	"github.com/plab0n/search-paste/pkg/logger"
@@ -9,6 +11,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 )
 
@@ -50,13 +53,38 @@ func (h *WorkerHandler) Scrapper(message interface{}) error {
 		}
 		plainText := extractText(rootHtml)
 		plainText = cancelNoise(plainText)
-		h.Bus.Publish(workerutils.PasteIndexerTopic(), plainText)
+		h.Bus.Publish(workerutils.EmbeddingTopic(), plainText)
 	}
 	return nil
 }
 
 func (h *WorkerHandler) EmbeddingHandler(message interface{}) error {
-
+	reqBody := &model.EmbeddingRequestBody{Input: message.(string)}
+	jsonBody, err := json.Marshal(reqBody)
+	if err != nil {
+		return err
+	}
+	embeddingApi := os.Getenv("EMBEDDING_API")
+	embeddingReq, err := http.NewRequest("POST", embeddingApi, bytes.NewReader(jsonBody))
+	if err != nil {
+		return err
+	}
+	httpClient := &http.Client{}
+	res, err := httpClient.Do(embeddingReq)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+	embeddingResponse := model.EmbeddingResponse{}
+	resBody, err := io.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal(resBody, &embeddingResponse)
+	if err != nil {
+		return err
+	}
+	//Save to elastic
 	return nil
 }
 func fetchContent(url string) (string, error) {

@@ -17,6 +17,8 @@ func init() {
 	p := &Root{}
 	p.Start()
 
+	e := &Embedder{}
+	e.Start()
 }
 
 func (p *Root) Start() error {
