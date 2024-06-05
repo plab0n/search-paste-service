@@ -1,7 +1,7 @@
 package model
 
 type EmbeddingRequestBody struct {
-	Input string
+	Input string `json:"input"`
 }
 type Data struct {
 	Embedding []float64 `json:"embedding"`
@@ -13,7 +13,7 @@ type Usage struct {
 }
 
 type EmbeddingResponse struct {
-	Data  Data   `json:"data"`
+	Data  []Data `json:"data"`
 	Model string `json:"model"`
 	Usage Usage  `json:"usage"`
 }

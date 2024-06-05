@@ -29,6 +29,7 @@ func (h *WorkerHandler) NewPasteHandler(message interface{}) error {
 			}
 		} else {
 			//Create embedding
+			h.Bus.Publish(workerutils.EmbeddingTopic(), paste.Text)
 		}
 	}
 	return nil
