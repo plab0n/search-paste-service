@@ -16,7 +16,7 @@ import (
 )
 
 type WorkerHandler struct {
-	Bus *bus.MessageBus
+	Bus bus.Bus
 }
 
 func (h *WorkerHandler) NewPasteHandler(message interface{}) error {

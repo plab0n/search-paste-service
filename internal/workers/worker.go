@@ -7,7 +7,6 @@ type Worker interface {
 }
 
 type BaseWorker struct {
-	Worker
-	B     *bus.Bus
+	B     bus.Bus
 	Topic string
 }

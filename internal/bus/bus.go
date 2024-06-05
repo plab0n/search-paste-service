@@ -15,7 +15,7 @@ type MessageBus struct {
 type Bus interface {
 	Publish(topic string, message interface{}) error
 	Subscribe(topic string) (chan interface{}, error)
-	SubscribeWithAction(topic string, action func(message interface{}) error)
+	SubscribeWithHandler(topic string, action func(message interface{}) error) error
 }
 
 const BUFFER_SIZE = 5

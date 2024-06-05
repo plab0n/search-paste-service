@@ -1,21 +1,19 @@
 package workers
 
 import (
-	"github.com/plab0n/search-paste/internal/bus"
 	workers "github.com/plab0n/search-paste/internal/workers/handlers"
 	"github.com/plab0n/search-paste/pkg/logger"
 	"github.com/plab0n/search-paste/pkg/workerutils"
 )
 
 type Embedder struct {
-	*BaseWorker
+	BaseWorker
 }
 
 func (e *Embedder) Start() error {
-	b := bus.New() // same as before such as scrapper
-	h := &workers.WorkerHandler{Bus: b}
+	h := &workers.WorkerHandler{Bus: e.B}
 	topic := workerutils.EmbeddingTopic()
-	err := b.SubscribeWithHandler(topic, h.EmbeddingHandler)
+	err := e.B.SubscribeWithHandler(topic, h.EmbeddingHandler)
 	if err != nil {
 		logger.Log.Error(err)
 	}

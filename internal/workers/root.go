@@ -7,24 +7,28 @@ import (
 )
 
 type Root struct {
-	Worker
+	BaseWorker
 }
 
 func init() {
+	b := bus.New()
+
 	c := &Scrapper{}
+	c.B = b
 	c.Start()
 
-	p := &Root{}
-	p.Start()
-
 	e := &Embedder{}
+	e.B = b
 	e.Start()
+
+	p := &Root{}
+	p.B = b
+	p.Start()
 }
 
 func (p *Root) Start() error {
-	b := bus.New()
 	topic := workerutils.PasteCreatedTopic()
-	h := &workers.WorkerHandler{Bus: b}
-	err := b.SubscribeWithHandler(topic, h.NewPasteHandler)
+	h := &workers.WorkerHandler{Bus: p.B}
+	err := p.B.SubscribeWithHandler(topic, h.NewPasteHandler)
 	return err
 }
