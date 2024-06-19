@@ -69,7 +69,7 @@ func (h *WorkerHandler) EmbeddingHandler(message interface{}) error {
 	}
 	embeddingApi := os.Getenv("EMBEDDING_API")
 	if len(embeddingApi) == 0 {
-		embeddingApi = "http://localhost:8000"
+		embeddingApi = "http://localhost:8000/v1/embeddings"
 	}
 	embeddingReq, err := http.NewRequest("POST", embeddingApi, bytes.NewReader(jsonBody))
 	if err != nil {
