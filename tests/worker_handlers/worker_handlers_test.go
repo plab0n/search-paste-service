@@ -14,3 +14,11 @@ func Test_Scrapper(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func Test_Embedder(t *testing.T) {
+	h := &workers.WorkerHandler{Bus: bus.New()}
+	err := h.EmbeddingHandler("Hi! Please embed me")
+	if err != nil {
+		t.Error(err)
+	}
+}
