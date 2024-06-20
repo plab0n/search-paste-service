@@ -18,4 +18,8 @@ func Test_CreateIndex(t *testing.T) {
 		t.Error(err)
 	}
 	ctx := context.Background()
+	err = es.CreateIndex(ctx, "test_vector_index")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
 }
