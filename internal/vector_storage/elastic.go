@@ -1,7 +1,9 @@
 package vector_storage
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
@@ -12,7 +14,7 @@ import (
 
 type VectorStorage interface {
 	CreateIndex(ctx context.Context, name string) error
-	IndexDocument(ctx context.Context, id string, vector []float32) error
+	IndexDocument(ctx context.Context, index string, id string, vector []float32) error
 	SearchDocument(ctx context.Context, queryVector []float32, k int) error
 }
 
@@ -56,7 +58,29 @@ func (e *ElasticSearch) CreateIndex(ctx context.Context, name string) error {
 	logger.Log.Log(logrus.InfoLevel, "Index Created")
 	return nil
 }
-func (e *ElasticSearch) IndexDocument(ctx context.Context, id string, vector []float32) error {
+func (e *ElasticSearch) IndexDocument(ctx context.Context, index string, id string, vector []float32) error {
+	doc := map[string]interface{}{
+		"paste_vector": vector,
+	}
+	body, err := json.Marshal(doc)
+	if err != nil {
+		return fmt.Errorf("error marshaling document: %v", err)
+	}
+	req := esapi.IndexRequest{
+		Index:      index,
+		DocumentID: id,
+		Body:       bytes.NewReader(body),
+	}
+
+	res, err := req.Do(context.Background(), e.client)
+	if err != nil {
+		return fmt.Errorf("error executing request: %v", err)
+	}
+	defer res.Body.Close()
+	if res.IsError() {
+		return fmt.Errorf("error indexing document: %s", res.String())
+	}
+	logger.Log.Log(logrus.InfoLevel, "Document %s indexed", id)
 	return nil
 }
 func (e *ElasticSearch) SearchDocument(ctx context.Context, queryVector []float32, k int) error {
