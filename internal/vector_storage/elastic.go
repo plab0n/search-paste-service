@@ -15,7 +15,7 @@ import (
 type VectorStorage interface {
 	CreateIndex(ctx context.Context, name string) error
 	IndexDocument(ctx context.Context, index string, id string, vector []float32) error
-	SearchDocument(ctx context.Context, queryVector []float32, k int) error
+	SearchDocument(ctx context.Context, index string, queryVector []float32, k int) error
 }
 
 type ElasticSearch struct {
@@ -72,7 +72,7 @@ func (e *ElasticSearch) IndexDocument(ctx context.Context, index string, id stri
 		Body:       bytes.NewReader(body),
 	}
 
-	res, err := req.Do(context.Background(), e.client)
+	res, err := req.Do(ctx, e.client)
 	if err != nil {
 		return fmt.Errorf("error executing request: %v", err)
 	}
@@ -83,6 +83,45 @@ func (e *ElasticSearch) IndexDocument(ctx context.Context, index string, id stri
 	logger.Log.Log(logrus.InfoLevel, "Document %s indexed", id)
 	return nil
 }
-func (e *ElasticSearch) SearchDocument(ctx context.Context, queryVector []float32, k int) error {
+func (e *ElasticSearch) SearchDocument(ctx context.Context, index string, queryVector []float32, k int) error {
+	query := map[string]interface{}{
+		"knn": map[string]interface{}{
+			"field":          "paste_vector",
+			"query_vector":   queryVector,
+			"k":              k,
+			"num_candidates": 100,
+		},
+	}
+	body, err := json.Marshal(query)
+	if err != nil {
+		return fmt.Errorf("error marshaling query: %v", err)
+	}
+
+	req := esapi.SearchRequest{
+		Index: []string{index},
+		Body:  bytes.NewReader(body),
+	}
+
+	res, err := req.Do(ctx, e.client)
+	if err != nil {
+		return fmt.Errorf("error executing request: %v", err)
+	}
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return fmt.Errorf("error performing search: %s", res.String())
+	}
+
+	var r map[string]interface{}
+	if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
+		return fmt.Errorf("error decoding response: %v", err)
+	}
+
+	logger.Log.Log(logrus.InfoLevel, "Found %d documents\n", int(r["hits"].(map[string]interface{})["total"].(map[string]interface{})["value"].(float64)))
+
+	for _, hit := range r["hits"].(map[string]interface{})["hits"].([]interface{}) {
+		doc := hit.(map[string]interface{})
+		logger.Log.Log(logrus.InfoLevel, "Document ID: %s, Score: %f\n", doc["_id"], doc["_score"].(float64))
+	}
 	return nil
 }
