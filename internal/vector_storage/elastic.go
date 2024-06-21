@@ -9,6 +9,7 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/plab0n/search-paste/pkg/logger"
 	"github.com/sirupsen/logrus"
+	"math"
 	"strings"
 )
 
@@ -37,7 +38,9 @@ func (e *ElasticSearch) CreateIndex(ctx context.Context, name string) error {
 			"properties": {
 				"paste_vector": {
 					"type": "dense_vector",
-					"dims": 1024
+					"dims": 1024,
+					"index": true,
+					"similarity": "dot_product"
 				}
 			}
 		}
@@ -59,6 +62,7 @@ func (e *ElasticSearch) CreateIndex(ctx context.Context, name string) error {
 	return nil
 }
 func (e *ElasticSearch) IndexDocument(ctx context.Context, index string, id string, vector []float32) error {
+	vector = normalizeVector(vector)
 	doc := map[string]interface{}{
 		"paste_vector": vector,
 	}
@@ -70,6 +74,7 @@ func (e *ElasticSearch) IndexDocument(ctx context.Context, index string, id stri
 		Index:      index,
 		DocumentID: id,
 		Body:       bytes.NewReader(body),
+		Refresh:    "true",
 	}
 
 	res, err := req.Do(ctx, e.client)
@@ -84,6 +89,7 @@ func (e *ElasticSearch) IndexDocument(ctx context.Context, index string, id stri
 	return nil
 }
 func (e *ElasticSearch) SearchDocument(ctx context.Context, index string, queryVector []float32, k int) error {
+	queryVector = normalizeVector(queryVector)
 	query := map[string]interface{}{
 		"knn": map[string]interface{}{
 			"field":          "paste_vector",
@@ -101,7 +107,6 @@ func (e *ElasticSearch) SearchDocument(ctx context.Context, index string, queryV
 		Index: []string{index},
 		Body:  bytes.NewReader(body),
 	}
-
 	res, err := req.Do(ctx, e.client)
 	if err != nil {
 		return fmt.Errorf("error executing request: %v", err)
@@ -124,4 +129,18 @@ func (e *ElasticSearch) SearchDocument(ctx context.Context, index string, queryV
 		logger.Log.Log(logrus.InfoLevel, "Document ID: %s, Score: %f\n", doc["_id"], doc["_score"].(float64))
 	}
 	return nil
+}
+
+func normalizeVector(vector []float32) []float32 {
+	var magnitude float32
+	for _, v := range vector {
+		magnitude += v * v
+	}
+	magnitude = float32(math.Sqrt(float64(magnitude)))
+
+	normalized := make([]float32, len(vector))
+	for i, v := range vector {
+		normalized[i] = v / magnitude
+	}
+	return normalized
 }
