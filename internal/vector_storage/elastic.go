@@ -15,7 +15,7 @@ import (
 
 type VectorStorage interface {
 	CreateIndex(ctx context.Context, name string) error
-	IndexDocument(ctx context.Context, index string, id string, vector []float32) error
+	IndexDocument(ctx context.Context, index string, id string, vector []float64) error
 	SearchDocument(ctx context.Context, index string, queryVector []float32, k int) error
 }
 
@@ -40,7 +40,12 @@ func (e *ElasticSearch) CreateIndex(ctx context.Context, name string) error {
 					"type": "dense_vector",
 					"dims": 1024,
 					"index": true,
-					"similarity": "dot_product"
+					"similarity": "dot_product",
+					"index_options": {
+    					"type": "hnsw",
+    					"ef_construction": 128,
+    					"m": 24    
+  					}
 				}
 			}
 		}
@@ -61,7 +66,7 @@ func (e *ElasticSearch) CreateIndex(ctx context.Context, name string) error {
 	logger.Log.Log(logrus.InfoLevel, "Index Created")
 	return nil
 }
-func (e *ElasticSearch) IndexDocument(ctx context.Context, index string, id string, vector []float32) error {
+func (e *ElasticSearch) IndexDocument(ctx context.Context, index string, id string, vector []float64) error {
 	vector = normalizeVector(vector)
 	doc := map[string]interface{}{
 		"paste_vector": vector,
@@ -88,7 +93,7 @@ func (e *ElasticSearch) IndexDocument(ctx context.Context, index string, id stri
 	logger.Log.Log(logrus.InfoLevel, "Document %s indexed", id)
 	return nil
 }
-func (e *ElasticSearch) SearchDocument(ctx context.Context, index string, queryVector []float32, k int) error {
+func (e *ElasticSearch) SearchDocument(ctx context.Context, index string, queryVector []float64, k int) error {
 	queryVector = normalizeVector(queryVector)
 	query := map[string]interface{}{
 		"knn": map[string]interface{}{
@@ -131,14 +136,14 @@ func (e *ElasticSearch) SearchDocument(ctx context.Context, index string, queryV
 	return nil
 }
 
-func normalizeVector(vector []float32) []float32 {
-	var magnitude float32
+func normalizeVector(vector []float64) []float64 {
+	var magnitude float64
 	for _, v := range vector {
 		magnitude += v * v
 	}
-	magnitude = float32(math.Sqrt(float64(magnitude)))
+	magnitude = math.Sqrt(magnitude)
 
-	normalized := make([]float32, len(vector))
+	normalized := make([]float64, len(vector))
 	for i, v := range vector {
 		normalized[i] = v / magnitude
 	}

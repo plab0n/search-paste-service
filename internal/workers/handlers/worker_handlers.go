@@ -60,7 +60,7 @@ func (h *WorkerHandler) Scrapper(message interface{}) error {
 
 func (h *WorkerHandler) EmbeddingHandler(message interface{}) error {
 	reqBody := &model.EmbeddingRequestBody{Input: message.(string)}
-	err, response := helpers.GetEmbedding(reqBody)
+	response, err := helpers.GetEmbedding(reqBody)
 	if err != nil {
 		return err
 	}

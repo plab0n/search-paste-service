@@ -11,10 +11,10 @@ import (
 	"os"
 )
 
-func GetEmbedding(reqBody *model.EmbeddingRequestBody) (error, *model.EmbeddingResponse) {
+func GetEmbedding(reqBody *model.EmbeddingRequestBody) (*model.EmbeddingResponse, error) {
 	jsonBody, err := json.Marshal(reqBody)
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
 	embeddingApi := os.Getenv("EMBEDDING_API")
 	if len(embeddingApi) == 0 {
@@ -22,25 +22,25 @@ func GetEmbedding(reqBody *model.EmbeddingRequestBody) (error, *model.EmbeddingR
 	}
 	embeddingReq, err := http.NewRequest("POST", embeddingApi, bytes.NewReader(jsonBody))
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
 	httpClient := &http.Client{}
 	res, err := httpClient.Do(embeddingReq)
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
 	defer res.Body.Close()
 	if res.StatusCode != http.StatusOK {
-		return errors.New(fmt.Sprintf("Http request failed. StatusCode: %d", res.StatusCode)), nil
+		return nil, errors.New(fmt.Sprintf("Http request failed. StatusCode: %d", res.StatusCode))
 	}
 	embeddingResponse := &model.EmbeddingResponse{}
 	resBody, err := io.ReadAll(res.Body)
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
 	err = json.Unmarshal(resBody, embeddingResponse)
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
-	return nil, embeddingResponse
+	return embeddingResponse, nil
 }
