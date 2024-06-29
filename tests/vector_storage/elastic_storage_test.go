@@ -56,6 +56,10 @@ func Test_SearchDocument(t *testing.T) {
 	}
 }
 func Test_IndexText(t *testing.T) {
+	es, err := vector_storage.NewElasticDb()
+	if err != nil {
+		t.Error(err)
+	}
 	ctx := context.Background()
 	req := &model.EmbeddingRequestBody{Input: "Golang is well known for concurrency."}
 	res, err := helpers.GetEmbedding(req)
@@ -65,10 +69,6 @@ func Test_IndexText(t *testing.T) {
 	var vec []float64
 	for _, v := range res.Data[0].Embedding {
 		vec = append(vec, v)
-	}
-	es, err := vector_storage.NewElasticDb()
-	if err != nil {
-		t.Error(err)
 	}
 	err = es.IndexDocument(ctx, "test_vector_index", "n1", vec)
 	if err != nil {

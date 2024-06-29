@@ -1,9 +1,10 @@
 package workers
 
 import (
-	"fmt"
+	"context"
 	"github.com/plab0n/search-paste/internal/bus"
 	"github.com/plab0n/search-paste/internal/model"
+	"github.com/plab0n/search-paste/internal/vector_storage"
 	"github.com/plab0n/search-paste/pkg/helpers"
 	"github.com/plab0n/search-paste/pkg/logger"
 	"github.com/plab0n/search-paste/pkg/workerutils"
@@ -16,6 +17,10 @@ import (
 
 type WorkerHandler struct {
 	Bus bus.Bus
+}
+type IndexHandler struct {
+	Bus           bus.Bus
+	VectorStorage vector_storage.VectorStorage
 }
 
 func (h *WorkerHandler) NewPasteHandler(message interface{}) error {
@@ -64,9 +69,15 @@ func (h *WorkerHandler) EmbeddingHandler(message interface{}) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(len(response.Model))
+	h.Bus.Publish(workerutils.PasteIndexerTopic(), response.Data[0])
 	//Save to elastic
 	return nil
+}
+
+func (h *IndexHandler) IndexingHandler(message interface{}) error {
+	vector := message.([]float64)
+	err := h.VectorStorage.IndexDocument(context.Background(), "get-from-config", "", vector)
+	return err
 }
 
 func fetchContent(url string) (string, error) {

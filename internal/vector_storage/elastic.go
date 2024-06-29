@@ -16,7 +16,7 @@ import (
 type VectorStorage interface {
 	CreateIndex(ctx context.Context, name string) error
 	IndexDocument(ctx context.Context, index string, id string, vector []float64) error
-	SearchDocument(ctx context.Context, index string, queryVector []float32, k int) error
+	SearchDocument(ctx context.Context, index string, queryVector []float64, k int) error
 }
 
 type ElasticSearch struct {

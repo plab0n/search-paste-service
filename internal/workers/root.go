@@ -2,6 +2,7 @@ package workers
 
 import (
 	"github.com/plab0n/search-paste/internal/bus"
+	"github.com/plab0n/search-paste/internal/vector_storage"
 	workers "github.com/plab0n/search-paste/internal/workers/handlers"
 	"github.com/plab0n/search-paste/pkg/workerutils"
 )
@@ -12,7 +13,7 @@ type Root struct {
 
 func init() {
 	b := bus.New()
-
+	es, _ := vector_storage.NewElasticDb()
 	c := &Scrapper{}
 	c.B = b
 	c.Start()
@@ -20,6 +21,10 @@ func init() {
 	e := &Embedder{}
 	e.B = b
 	e.Start()
+
+	i := &Indexer{}
+	i.B = b
+	i.VectorStorage = es
 
 	p := &Root{}
 	p.B = b
