@@ -1,9 +1,10 @@
 package workers
 
 import (
-	"fmt"
+	"context"
 	"github.com/plab0n/search-paste/internal/bus"
 	"github.com/plab0n/search-paste/internal/model"
+	"github.com/plab0n/search-paste/internal/vector_storage"
 	"github.com/plab0n/search-paste/pkg/helpers"
 	"github.com/plab0n/search-paste/pkg/logger"
 	"github.com/plab0n/search-paste/pkg/workerutils"
@@ -11,11 +12,16 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
 type WorkerHandler struct {
 	Bus bus.Bus
+}
+type IndexHandler struct {
+	Bus           bus.Bus
+	VectorStorage vector_storage.VectorStorage
 }
 
 func (h *WorkerHandler) NewPasteHandler(message interface{}) error {
@@ -59,17 +65,23 @@ func (h *WorkerHandler) Scrapper(message interface{}) error {
 }
 
 func (h *WorkerHandler) EmbeddingHandler(message interface{}) error {
-	payload := message.(model.EmbeddingPayload)
+	payload := message.(*model.EmbeddingPayload)
 	chunks := chunkTextByTokens(payload.Text, 512)
 	for _, chunk := range chunks {
 		reqBody := &model.EmbeddingRequestBody{Input: chunk}
 		response, err := helpers.GetEmbedding(reqBody)
-		fmt.Print(response.Model)
 		if err != nil {
 			return err
 		}
+		h.Bus.Publish(workerutils.PasteIndexerTopic(), &model.IndexPayload{PasteId: payload.PasteId, Embedding: response.Data[0].Embedding})
 	}
+	//Save to elastic
 	return nil
+}
+func (h *IndexHandler) IndexingHandler(message interface{}) error {
+	payload := message.(*model.IndexPayload)
+	err := h.VectorStorage.IndexDocument(context.Background(), "test-vector-index", strconv.Itoa(payload.PasteId), payload.Embedding)
+	return err
 }
 func tokenize(text string) []string {
 	return strings.Fields(text)
@@ -88,6 +100,7 @@ func chunkTextByTokens(text string, maxTokens int) []string {
 	}
 	return chunks
 }
+
 func fetchContent(url string) (string, error) {
 	//TODO: Check response error codes
 	response, err := http.Get(url)

@@ -12,6 +12,10 @@ type ScrapingInfo struct {
 }
 
 type EmbeddingPayload struct {
-	PasteId int
-	Text    string
+	PasteId int    `json:"paste_id"`
+	Text    string `json:"text"`
+}
+type IndexPayload struct {
+	PasteId   int       `json:"paste_id"`
+	Embedding []float64 `json:"embedding"`
 }

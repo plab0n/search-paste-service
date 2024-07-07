@@ -55,7 +55,7 @@ func (h *Handlers) AddPasteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	response := model.IDResponse{ID: id}
 	h.Sender.JSON(w, http.StatusCreated, response)
-
+	paste.ID = id
 	err = h.Bus.Publish(workerutils.PasteCreatedTopic(), paste)
 	if err != nil {
 		logger.Log.Error(err)
