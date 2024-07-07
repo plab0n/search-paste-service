@@ -99,6 +99,7 @@ services:
       - ${ES_PORT}:9200
     environment:
       - node.name=es01
+      - network.host= ${ES_NETWORK_HOST}
       - cluster.name=${CLUSTER_NAME}
       - discovery.type=single-node
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
