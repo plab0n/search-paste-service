@@ -53,22 +53,41 @@ func (h *WorkerHandler) Scrapper(message interface{}) error {
 		}
 		plainText := extractText(rootHtml)
 		plainText = cancelNoise(plainText)
-		h.Bus.Publish(workerutils.EmbeddingTopic(), plainText)
+		h.Bus.Publish(workerutils.EmbeddingTopic(), &model.EmbeddingPayload{PasteId: cm.PasteId, Text: plainText})
 	}
 	return nil
 }
 
 func (h *WorkerHandler) EmbeddingHandler(message interface{}) error {
-	reqBody := &model.EmbeddingRequestBody{Input: message.(string)}
-	response, err := helpers.GetEmbedding(reqBody)
-	if err != nil {
-		return err
+	payload := message.(model.EmbeddingPayload)
+	chunks := chunkTextByTokens(payload.Text, 512)
+	for _, chunk := range chunks {
+		reqBody := &model.EmbeddingRequestBody{Input: chunk}
+		response, err := helpers.GetEmbedding(reqBody)
+		fmt.Print(response.Model)
+		if err != nil {
+			return err
+		}
 	}
-	fmt.Println(len(response.Model))
-	//Save to elastic
 	return nil
 }
+func tokenize(text string) []string {
+	return strings.Fields(text)
+}
+func chunkTextByTokens(text string, maxTokens int) []string {
+	tokens := tokenize(text)
+	var chunks []string
 
+	for i := 0; i < len(tokens); i += maxTokens {
+		end := i + maxTokens
+		if end > len(tokens) {
+			end = len(tokens)
+		}
+		chunk := strings.Join(tokens[i:end], " ")
+		chunks = append(chunks, chunk)
+	}
+	return chunks
+}
 func fetchContent(url string) (string, error) {
 	//TODO: Check response error codes
 	response, err := http.Get(url)

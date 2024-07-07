@@ -10,3 +10,8 @@ type ScrapingInfo struct {
 	PasteId int    `json:"paste_id"`
 	Url     string `json:"url"`
 }
+
+type EmbeddingPayload struct {
+	PasteId int
+	Text    string
+}
