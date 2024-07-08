@@ -25,7 +25,7 @@ func init() {
 	i := &Indexer{}
 	i.B = b
 	i.VectorStorage = es
-
+	i.Start()
 	p := &Root{}
 	p.B = b
 	p.Start()
