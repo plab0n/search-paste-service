@@ -80,7 +80,7 @@ func (h *WorkerHandler) EmbeddingHandler(message interface{}) error {
 }
 func (h *IndexHandler) IndexingHandler(message interface{}) error {
 	payload := message.(*model.IndexPayload)
-	err := h.VectorStorage.IndexDocument(context.Background(), "test-vector-index", strconv.Itoa(payload.PasteId), payload.Embedding)
+	err := h.VectorStorage.IndexDocument(context.Background(), "test_vector_index", strconv.Itoa(payload.PasteId), payload.Embedding)
 	return err
 }
 func tokenize(text string) []string {

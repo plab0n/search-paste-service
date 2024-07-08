@@ -27,7 +27,7 @@ func NewElasticDb() (*ElasticSearch, error) {
 	client, err := elasticsearch.NewTypedClient(elasticsearch.Config{
 		Addresses:            []string{"http://localhost:9200"},
 		APIKey:               "TFpDX0w1QUJGNm04S2RXWGVkaFA6TUx0RG9YY0pRUzZZY2tMa0I1VUc5Zw==",
-		DiscoverNodesOnStart: true,
+		DiscoverNodesOnStart: false,
 	})
 	return &ElasticSearch{client: client}, err
 }
@@ -46,6 +46,9 @@ func (e *ElasticSearch) CreateIndex(ctx context.Context, name string) error {
     					"ef_construction": 128,
     					"m": 24    
   					}
+				},
+				"paste_id": {
+					"type": "text"
 				}
 			}
 		}
@@ -70,16 +73,16 @@ func (e *ElasticSearch) IndexDocument(ctx context.Context, index string, id stri
 	vector = normalizeVector(vector)
 	doc := map[string]interface{}{
 		"paste_vector": vector,
+		"paste_id":     id,
 	}
 	body, err := json.Marshal(doc)
 	if err != nil {
 		return fmt.Errorf("error marshaling document: %v", err)
 	}
 	req := esapi.IndexRequest{
-		Index:      index,
-		DocumentID: id,
-		Body:       bytes.NewReader(body),
-		Refresh:    "true",
+		Index:   index,
+		Body:    bytes.NewReader(body),
+		Refresh: "true",
 	}
 
 	res, err := req.Do(ctx, e.client)
